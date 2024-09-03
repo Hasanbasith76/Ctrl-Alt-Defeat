@@ -1,5 +1,6 @@
 This is a Preview of #Figma Design for user interface with Flow.
 the screen design for the workflow of the AI assessment platform is uploaded in above folder.
+The colors, gradients and logos used in this project was inspired from https://hexaware.com/ for the signature display.
 
 Figma Prototype link:
 
