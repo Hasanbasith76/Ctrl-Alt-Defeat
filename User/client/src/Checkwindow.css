@@ -1,0 +1,12 @@
+.h1-tags{
+    display: flex;
+    column-gap: 100px;
+    margin-left: 450px;
+}
+.Checkwindow{
+    background-color: aliceblue;
+}
+.container-1{
+    display: flex;
+    column-gap: 100px;
+}

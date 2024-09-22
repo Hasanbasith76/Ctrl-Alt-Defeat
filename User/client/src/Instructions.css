@@ -1,0 +1,10 @@
+.Instructions{
+    display: flex;
+    column-gap: 100px;
+    margin-top: 50px;
+}
+.contentinst{
+    margin-top: 100px;
+    margin-left: 150px;
+    color:  aliceblue;
+}

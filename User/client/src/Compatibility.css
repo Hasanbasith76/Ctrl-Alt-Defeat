@@ -1,0 +1,10 @@
+.Compatibility{
+    display: flex;
+    column-gap: 100px;
+    color:  aliceblue;
+    margin-top: 50px;
+}
+.contentcomp{
+    margin-top: 200px;
+    margin-left: 150px;
+}
