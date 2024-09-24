@@ -8,7 +8,7 @@
 }
 .container-1{
     display: flex;
-    column-gap: 100px;
+    column-gap: 10px;
     margin-left: 120px;
 }
 .strt{
@@ -31,11 +31,6 @@
     width: 400px;
     height: 200px;
 }
-.videoelem{
-    background-color: black;
-    width: 500px;
-    height: 250px;
-}
 .capimg{
     background-color: #50a1ff;
     border: none;
@@ -51,7 +46,19 @@
     margin-left: 150px;
     margin-bottom: 10px;
     font-weight: bold;
+    cursor: pointer;
 }
 .h1-chk{
     margin-left: 140px;
+}
+.disp{
+    display: flex;
+    column-gap: 200px;
+}
+.abc{
+    margin-left: 100px;
+}
+.vid{
+    border:2px;
+    border-style: solid;
 }
