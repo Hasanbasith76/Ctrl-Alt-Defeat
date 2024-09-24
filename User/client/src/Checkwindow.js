@@ -18,16 +18,30 @@ export default function Checkwindow(){
             <hr color="red"/>
             <div className="container-1">
                 <div className="Liveweb">
-                    <h1>Live Web Cam</h1>
+                    <h1 className="h1-chk">Live Web Cam</h1>
+                    <div className="videoelem">
+                        <video className="Video"></video>
+                    </div>
                     <button className="capimg">Capture Image</button>
                 </div>
                 <div className="Captured">
-                    <h1>Captured Photo</h1>
+                    <h1 className="h1-chk">Captured Photo</h1>
+                    <div className="videoelem">
+                        <image className="Video"></image>
+                    </div>
                     <button className="capimg">Continue to audio test</button>
                 </div>
             </div>
             <hr color="blue"/>
-            <h3>If you are getting error in connectig video camera, then please allow camera access for this site. you must allow your broser to access the web-camera. please do the followimg setting in compatible latest version of browsers such as google chrome or microsoft edge for a smoother experience </h3>
+            <h3>If you are getting error in connecting video camera, then please allow camera access for this site. you must allow your browser to access the web-camera. please do the followimg setting in compatible latest version of browsers such as google chrome or microsoft edge for a smoother experience </h3>
+            <a href="/Compatibility">
+            <button className="M">
+                <img src={require("./R.png")} width={30}></img>
+            </button>
+            </a>
+            <a href="/Instructions">
+                <button className="strt">Start Assessment</button>
+            </a>
         </div>
     )
 }

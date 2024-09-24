@@ -9,9 +9,13 @@ export default function Dashboard(){
             <div className="Dash-content">
                 <h1>Welcome Back, {candidatename}! Ready to conquer your assessments? </h1>
                 <p>Dive into your personalized dashboard to start or review your assessments. Track your progress and view past reports to prepare for future success.</p>
-                <button className="Start-btn">Start Your Assessment</button>
+                <a href="/Compatibility">
+                    <button className="Start-btn">Start Your Assessment</button>
+                </a>
                 <br/>
-                <button className="Reports-btn">View Past Reports</button>
+                <a href="/reports">
+                    <button className="Reports-btn">View Past Reports</button>
+                </a>
                 <p>Your journey towards excellence begins here!</p>
                 <h3>{candidatename}</h3>
             </div>

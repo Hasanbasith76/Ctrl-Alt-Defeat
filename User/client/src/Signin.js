@@ -17,10 +17,14 @@ export default function Signin(){
         <br/>
         <p className="f">forgot your password?</p>
         <br/>
+        <a href="/Dashboard">
+            <button className="Submit-btn">Continue to Dashboard</button>
+            <h4 className="h4-signup">Sign in with google account</h4>
+        </a>
         
-        <button className="Submit-btn">Continue to Dashboard</button>
-        <h4 className="h4-signup">Sign in with google account</h4>
-        <p className="p">New here? Create an account and join us today!</p>
+        <a href="/signup">
+            <p className="p">New here? Create an account and join us today!</p>
+        </a>
         </div>
     )
 }

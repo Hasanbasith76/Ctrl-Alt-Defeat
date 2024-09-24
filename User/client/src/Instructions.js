@@ -16,8 +16,16 @@ export default function Instructions(){
                     <li>Do not use any outside reference material</li>
                 </ul>
                 <div className="nav-btn">
-                    <button>=</button>
-                    <button>=</button>
+                    <a href="/Checkwindow">
+                        <button className="L"> 
+                            <img src={require("./R.png")} width={30}></img>
+                        </button>
+                    </a>
+                    <a href="">
+                        <button className="L">
+                            <img src={require("./foward.png")} width={30}></img>
+                        </button>
+                    </a>
                 </div>
             </div>
             <img src={require("./lap.png")}></img>

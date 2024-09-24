@@ -21,8 +21,10 @@ export default function Signup(){
         <input type="text" placeholder="Enter your password" className="password-input"></input>
         <br/>
         <br/>
-        <button className="Submit-btn">Continue to Signup</button>
-        <h4 className="h4-signup">Sign in with google account</h4>
+        <a href="/signin">
+            <button className="Submit-btn">Continue to Signup</button>
+            <h4 className="h4-signup">Sign in with google account</h4>
+        </a>
         
         </div>
     )
