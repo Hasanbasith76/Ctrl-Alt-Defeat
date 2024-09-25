@@ -18,7 +18,7 @@ export default function Checkwindow(){
                 <li>Ensure that your face is clear with proper lighting.</li>
             </ul>
             <hr color="red"/>
-                <WebcamComponent/>
+                <WebcamComponent Action={{pro:"Capture"}}/>
             <hr color="blue"/>
             <h3>If you are getting error in connecting video camera, then please allow camera access for this site. you must allow your browser to access the web-camera. please do the followimg setting in compatible latest version of browsers such as google chrome or microsoft edge for a smoother experience </h3>
             <a href="/Compatibility">

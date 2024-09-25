@@ -1,0 +1,48 @@
+.Testwindow{
+    background-color: aliceblue;
+}
+.h1-test{
+    text-align: center;
+}
+.container-test{
+    margin-left: 50px;
+}
+.btn-next{
+    background-color: #188903;
+    border: none;
+    color: #000000;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 10px;
+    height: 44px;
+    align-content: center;
+    padding: 5px;
+    margin-left: 300px;
+    margin-top: 10px;
+    width: 15vw;
+}
+.btn-prev{
+    background-color: red;
+    border: none;
+    color: #000000;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 10px;
+    height: 44px;
+    align-content: center;
+    padding: 5px;
+    margin-left: 250px;
+    margin-top: 0px;
+    margin-bottom: 10px;
+    width: 15vw;
+}
+.answers {
+    list-style-type: none;
+    padding: 0;
+}
+.question{
+    max-width: fit-content;
+}
+.bullet{
+    max-width: 50px;
+}

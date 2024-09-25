@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const WebcamComponent = () => {
+const WebcamComponent = ({Action}) => {
   const webcamRef = useRef(null);
 
   useEffect(() => {
@@ -38,13 +38,15 @@ const WebcamComponent = () => {
     });
   };
 
+  setInterval(capture,2000)
+
   return (
     <div className='disp'>
         <div className='abc'>
             <div ref={webcamRef} className='vid'>
                 <video className='video' autoPlay>Video Stream Not Available.</video>
             </div>
-            <button onClick={capture} className='capimg'>Capture Photo</button>
+            <button onClick={capture} className='capimg'>{Action.pro}</button>
         </div>
         <div id='results'>
         </div>

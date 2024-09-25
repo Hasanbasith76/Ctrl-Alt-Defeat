@@ -21,7 +21,7 @@ export default function Instructions(){
                             <img src={require("./R.png")} width={30}></img>
                         </button>
                     </a>
-                    <a href="">
+                    <a href="/Testwindow">
                         <button className="L">
                             <img src={require("./foward.png")} width={30}></img>
                         </button>
