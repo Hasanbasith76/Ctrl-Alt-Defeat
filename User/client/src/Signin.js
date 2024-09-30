@@ -20,17 +20,19 @@ export default function Signin(){
         <br/>
         <a href="/Dashboard">
             <button className="Submit-btn">Continue to Dashboard</button>
-            <h4 className="h4-signup">
-            <span>
-            <GoogleLogin
-            onSuccess={credentialResponse => {
-                console.log(credentialResponse);
-            }}
-            onError={() => {
-                console.log('Login Failed');
-            }}
-            />
-            </span></h4>
+            <a href="/signin/oauth">
+                <h4 className="h4-signup">
+                <span>
+                <GoogleLogin
+                onSuccess={credentialResponse => {
+                    console.log(credentialResponse);
+                }}
+                onError={() => {
+                    console.log('Login Failed');
+                }}
+                />
+                </span></h4>
+            </a>
         </a>
         
         <a href="/signup">

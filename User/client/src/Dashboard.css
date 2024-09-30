@@ -23,6 +23,7 @@
     margin-top: 10px;
     width: 15vw;
     font-weight: bold;
+    cursor: pointer;
 }
 .Reports-btn{
     background-color: #50a1ff;

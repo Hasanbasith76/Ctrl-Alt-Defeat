@@ -7,7 +7,6 @@ export default function Checkwindow(){
         <div className="Checkwindow">
             <div className="h1-tags">
                 <h1>Webcam Test</h1>
-                <h1>Audio Test</h1>
             </div>
             <hr color="red"/>
             <h1>Instructions:</h1>
@@ -18,12 +17,12 @@ export default function Checkwindow(){
                 <li>Ensure that your face is clear with proper lighting.</li>
             </ul>
             <hr color="red"/>
-                <WebcamComponent Action={{pro:"Capture"}}/>
+                <WebcamComponent Action={{name:"Capture"}}/>
             <hr color="blue"/>
             <h3>If you are getting error in connecting video camera, then please allow camera access for this site. you must allow your browser to access the web-camera. please do the followimg setting in compatible latest version of browsers such as google chrome or microsoft edge for a smoother experience </h3>
             <a href="/Compatibility">
             <button className="M">
-                <img src={require("./R.png")} width={30}></img>
+                <img src={require("./left.png")} width={30}></img>
             </button>
             </a>
             <a href="/Instructions">

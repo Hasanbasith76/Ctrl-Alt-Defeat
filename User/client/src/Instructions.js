@@ -18,12 +18,12 @@ export default function Instructions(){
                 <div className="nav-btn">
                     <a href="/Checkwindow">
                         <button className="L"> 
-                            <img src={require("./R.png")} width={30}></img>
+                            <img src={require("./left.png")} width={40}></img>
                         </button>
                     </a>
                     <a href="/Testwindow">
                         <button className="L">
-                            <img src={require("./foward.png")} width={30}></img>
+                            <img src={require("./right.png")} width={40}/>
                         </button>
                     </a>
                 </div>

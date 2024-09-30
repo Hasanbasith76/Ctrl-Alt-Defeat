@@ -27,9 +27,10 @@ input{
     height: 44px;
     align-content: center;
     padding: 5px;
-    margin-left: 300px;
+    margin-left: 284px;
     margin-top: 10px;
     width: 15vw;
+    cursor: pointer;
 }
 .h4-signup{
     margin-left: 295px;
@@ -41,4 +42,5 @@ input{
 }
 .f{
     margin-left: 535px;
+    cursor: pointer;
 }

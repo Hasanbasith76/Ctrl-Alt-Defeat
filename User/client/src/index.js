@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import auth from './auth';
 import Homepage from './Homepage';
 import Signin from './Signin';
 import Signup from './Signup';
@@ -18,16 +19,11 @@ import reportWebVitals from './reportWebVitals';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <div>
-    <React.StrictMode>
-      <GoogleOAuthProvider clientId="38472521135-cr1h27u93s0tvdh0uoqiusqnd4hn8hjm.apps.googleusercontent.com">
-        <Signin/>
-      </GoogleOAuthProvider>;
-    </React.StrictMode>
-    
     <BrowserRouter>
     <Routes>
         <Route path='/' Component={Homepage} />
-        <Route path='/signin' Component={Signin} />
+        <Route path='/signin' Component={auth} />
+        <Route path='/signin/oauth' Component={auth}/>
         <Route path='/signup' Component={Signup} />
         <Route path='/Dashboard' Component={Dashboard} />
         <Route path='/reports' Component={Results} />

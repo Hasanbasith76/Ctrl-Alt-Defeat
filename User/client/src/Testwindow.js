@@ -6,6 +6,7 @@ export default function Testwindow(){
     return(
         <div className="Testwindow">
             <h1 className="h1-test">Assessment</h1>
+            <div className="proper-align">
             <WebcamComponent Action={{pro:"Live Recording"}} className="webcam1"/>
             <div className="container-test">
                 <h5 className="h5-test">Q.No:1</h5>
@@ -22,5 +23,6 @@ export default function Testwindow(){
                 <button className="btn-next">Next</button>
             </div>   
         </div>
+    </div>
     )
 }
