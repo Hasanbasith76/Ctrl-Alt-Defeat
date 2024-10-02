@@ -1,1 +1,99 @@
+let video = document.getElementById("video");
+let statusText = document.getElementById("status");
+let audioContext, audioAnalyzer, audioDataArray;
+
+// Start video stream from webcam
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then((stream) => {
+        video.srcObject = stream;
+        setupAudioProcessing(stream);
+        startFaceDetection();
+    })
+    .catch((err) => console.error("Error accessing media devices.", err));
+
+// Initialize the face detection model
+async function startFaceDetection() {
+    // Load the face landmarks detection model
+    const model = await faceLandmarksDetection.load(
+        faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
+    );
+
+    // Start detecting faces
+    detectFaces(model);
+}
+
+// Detect faces and check for head pose direction
+async function detectFaces(model) {
+    const predictions = await model.estimateFaces({
+        input: video,
+        returnTensors: false,
+        flipHorizontal: false
+    });
+
+    if (predictions.length > 0) {
+        const face = predictions[0];
+
+        // Extract keypoints from face detection (using landmarks for nose)
+        const keypoints = face.keypoints;
+
+        // Find the positions of specific keypoints for the nose, eyes, etc.
+        const noseTip = keypoints.find((point) => point.name === "noseTip");
+        const leftEye = keypoints.find((point) => point.name === "leftEye");
+        const rightEye = keypoints.find((point) => point.name === "rightEye");
+
+        if (noseTip && leftEye && rightEye) {
+            // Calculate nose position and infer head direction based on keypoint x, y positions
+            const noseX = noseTip.x;
+            const noseY = noseTip.y;
+
+            // Simplified logic for direction
+            if (noseX < 200) {
+                statusText.innerText = "Status: Suspicious activity detected - Looking Left";
+            } else if (noseX > 440) {
+                statusText.innerText = "Status: Suspicious activity detected - Looking Right";
+            } else if (noseY < 150) {
+                statusText.innerText = "Status: Suspicious activity detected - Looking Up";
+            } else if (noseY > 350) {
+                statusText.innerText = "Status: Suspicious activity detected - Looking Down";
+            } else {
+                statusText.innerText = "Status: Normal";
+            }
+        } else {
+            statusText.innerText = "Status: Unable to detect face landmarks.";
+        }
+    } else {
+        statusText.innerText = "Status: No face detected.";
+    }
+
+    // Continuously detect faces in the video stream
+    requestAnimationFrame(() => detectFaces(model));
+}
+
+// Set up audio processing to detect suspicious audio levels
+function setupAudioProcessing(stream) {
+    audioContext = new AudioContext();
+    const source = audioContext.createMediaStreamSource(stream);
+    audioAnalyzer = audioContext.createAnalyser();
+    audioAnalyzer.fftSize = 512;
+
+    const bufferLength = audioAnalyzer.frequencyBinCount;
+    audioDataArray = new Uint8Array(bufferLength);
+
+    source.connect(audioAnalyzer);
+
+    monitorAudioLevels();
+}
+
+// Monitor audio levels and detect suspicious activity
+function monitorAudioLevels() {
+    audioAnalyzer.getByteFrequencyData(audioDataArray);
+
+    const averageVolume = audioDataArray.reduce((a, b) => a + b) / audioDataArray.length;
+
+    if (averageVolume > 150) {
+        statusText.innerText = "Status: Suspicious activity detected - High Audio Levels";
+    }
+
+    setTimeout(monitorAudioLevels, 500);
+}
 
