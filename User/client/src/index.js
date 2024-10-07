@@ -31,6 +31,7 @@ root.render(
         <Route path='/Instructions' Component={Instructions} />
         <Route path='/Checkwindow' Component={Checkwindow} />
         <Route path='/Testwindow' Component={Testwindow} />
+        <Route path='/Thankyou' Component={Thankyou} />
     </Routes> 
   </BrowserRouter>
   </div>

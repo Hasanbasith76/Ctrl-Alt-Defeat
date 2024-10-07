@@ -22,7 +22,7 @@ export default function Signin(){
             <button className="Submit-btn">Continue to Dashboard</button>
             <a href="/signin/oauth">
                 <h4 className="h4-signup">
-                <span>
+                <div className="Google">
                 <GoogleLogin
                 onSuccess={credentialResponse => {
                     console.log(credentialResponse);
@@ -31,7 +31,7 @@ export default function Signin(){
                     console.log('Login Failed');
                 }}
                 />
-                </span></h4>
+                </div></h4>
             </a>
         </a>
         
