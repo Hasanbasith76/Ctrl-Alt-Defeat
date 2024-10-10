@@ -25,7 +25,7 @@ input{
     border-radius: 10px;
     height: 44px;
     padding: 5px;
-    margin-left: 500px;
+    margin-left: ;
     margin-top: 10px;
     width: 15vw;
 }
@@ -34,9 +34,13 @@ input{
 }
 .p{
     font-size: small;
-    margin-top: -5px;
-    margin-left: 265px;
+    margin-top: 10px;
+    margin-left: 250px;
 }
 .f{
-    margin-left: 535px;
+    margin-left: 310px;
+}
+.Custom-google{
+    margin-left: 300px;
+    padding: 0px;
 }

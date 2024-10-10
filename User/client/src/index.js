@@ -2,10 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import auth from './auth';
 import Homepage from './Homepage';
-import Signin from './Signin';
 import Signup from './Signup';
 import Dashboard from './Dashboard'; 
 import Results from './Result';
@@ -15,6 +13,7 @@ import Testwindow from './Testwindow';
 import Thankyou from './Thankyou';
 import Checkwindow from './Checkwindow';
 import reportWebVitals from './reportWebVitals';
+import Signin from './Signin';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -22,7 +21,7 @@ root.render(
     <BrowserRouter>
     <Routes>
         <Route path='/' Component={Homepage} />
-        <Route path='/signin' Component={auth} />
+        <Route path='/signin' Component={Signin} />
         <Route path='/signin/oauth' Component={auth}/>
         <Route path='/signup' Component={Signup} />
         <Route path='/Dashboard' Component={Dashboard} />
@@ -31,6 +30,7 @@ root.render(
         <Route path='/Instructions' Component={Instructions} />
         <Route path='/Checkwindow' Component={Checkwindow} />
         <Route path='/Testwindow' Component={Testwindow} />
+        <Route path='/Thankyou' Component={Thankyou} />
     </Routes> 
   </BrowserRouter>
   </div>

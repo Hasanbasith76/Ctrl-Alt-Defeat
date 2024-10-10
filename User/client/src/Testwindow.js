@@ -20,6 +20,9 @@ export default function Testwindow(){
                 </div>
                 <br/>
                 <button className="btn-prev">Previous</button>
+                <a href="/Thankyou">
+                    <button className="Submit-test">Submit&End</button>
+                </a>
                 <button className="btn-next">Next</button>
             </div>   
         </div>
