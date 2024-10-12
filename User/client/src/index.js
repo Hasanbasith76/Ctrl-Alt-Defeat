@@ -30,7 +30,7 @@ root.render(
         <Route path='/Checkwindow' Component={Checkwindow} />
         <Route path='/Testwindow' Component={Testwindow} />
         <Route path='/Thankyou' Component={Thankyou} />
-    </Routes>
+    </Routes> 
   </BrowserRouter>
   </div>
     

@@ -31,6 +31,8 @@ input{
 }
 .h4-signup{
     margin-left: 295px;
+    width: 150px;
+    margin-right: 70px;
 }
 .p{
     font-size: small;
@@ -38,6 +40,10 @@ input{
     margin-left: 250px;
 }
 .f{
+    margin-left: 535px;
+}
+.Google{
+    margin-left: -21px ;
     margin-left: 310px;
 }
 .Custom-google{
