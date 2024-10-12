@@ -1,1 +1,1 @@
-AI Proctored Assessmen Platform
+AI Proctored Assessment Platform
