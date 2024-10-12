@@ -1,80 +1,91 @@
-// client/src/App.js
 import React, { useState } from 'react';
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { Navigate } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import './Signin.css';
-import axios from 'axios';
+import { useAuth } from './context';
+import { doSignInWithEmailAndPassword, doSignInWithGoogle } from './authfb';
 
 function Signin() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
+  const { userLoggedIn } = useAuth();
 
-  const handleSubmit = async (e) => {
-    console.log('handlesubmit called');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const onSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:3000/api/users/login', { username, password });
-      console.log(response.data);
-      // Login successful, redirect to dashboard
-      window.location.href = '/dashboard';
-    } catch (error) {
-      setError(error.response.data.error);
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      try {
+        await doSignInWithEmailAndPassword(email, password);
+        // doSendEmailVerification();
+      } catch (error) {
+        setIsSigningIn(false);
+        setErrorMessage(error.message);
+      }
+    }
+  };
+
+  const onGoogleSignIn = (e) => {
+    e.preventDefault();
+    if (!isSigningIn) {
+      setIsSigningIn(true);
+      doSignInWithGoogle().catch((err) => {
+        setIsSigningIn(false);
+        setErrorMessage(err.message);
+      });
     }
   };
 
   return (
-    <div className="Signin">
-      <h1 className="Greet">Welcome Back, User!</h1>
-      <p>Sign in with your email address</p>
-      <form onSubmit={(e) => {
-      handleSubmit(e);
-      }}>
-        <label className="lbl">Email</label>
-        <br />
-        <input
-          type="text"
-          placeholder="Enter your email address"
-          className="email-input"
-          required="true"
-          id="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <br />
-        <br />
-        <label className="lbl">Password</label>
-        <br />
-        <input
-          type="password"
-          placeholder="Enter your password"
-          className="password-input"
-          required="true"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
-        <button type="submit" className="Submit-btn">Login</button>
-      </form>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-      <p className="f">forgot your password?</p>
-      <br />
-        <button className="Custom-google">
-          <GoogleOAuthProvider>
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              console.log(credentialResponse);
-            }}
-            onError={() => {
-              console.log('Google login failed');
-            }}
+
+      <div className="Signin">
+        {userLoggedIn && (<Navigate to={'/Dashboard'} replace={true} />)}
+        <h1 className="Greet">Welcome Back, User!</h1>
+        <p>Sign in with your email address</p>
+        <form onSubmit={onSubmit}>
+          <label className="lbl">Email</label>
+          <br />
+          <input
+            type="text"
+            placeholder="Enter your email address"
+            className="email-input"
+            required="true"
+            id="username"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          </GoogleOAuthProvider>
-        </button>
-      <a href="/signup">
-        <p className="p">New here? Create an account and join us today!</p>
-      </a>
-    </div>
+          <br />
+          <br />
+          <label className="lbl">Password</label>
+          <br />
+          <input
+            type="password"
+            placeholder="Enter your password"
+            className="password-input"
+            required="true"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <br />
+          {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
+          <button type="submit" className="Submit-btn">
+            {isSigningIn ? 'Signing In...' : 'Login'}
+          </button>
+        </form>
+        <p className="f">forgot your password?</p>
+        <br />
+        <GoogleOAuthProvider>
+            <button className="Custom-google" onClick={onGoogleSignIn}>
+              {isSigningIn ? 'Signing In...' : 'Sign in With Google'}
+            </button>
+        </GoogleOAuthProvider>
+        <a href="/signup">
+          <p className="p">New here? Create an account and start shopping</p>
+        </a>
+      </div>
   );
 }
 

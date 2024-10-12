@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import auth from './auth';
+import auth from './oauth';
 import Homepage from './Homepage';
 import Signup from './Signup';
 import Dashboard from './Dashboard'; 
@@ -18,12 +18,11 @@ import Signin from './Signin';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <div>
-    <BrowserRouter>
+  <BrowserRouter>
     <Routes>
         <Route path='/' Component={Homepage} />
-        <Route path='/signin' Component={Signin} />
-        <Route path='/signin/oauth' Component={auth}/>
         <Route path='/signup' Component={Signup} />
+        <Route path='/signin' Component={Signin} />
         <Route path='/Dashboard' Component={Dashboard} />
         <Route path='/reports' Component={Results} />
         <Route path='/Compatibility' Component={Compatibility} />
@@ -31,7 +30,7 @@ root.render(
         <Route path='/Checkwindow' Component={Checkwindow} />
         <Route path='/Testwindow' Component={Testwindow} />
         <Route path='/Thankyou' Component={Thankyou} />
-    </Routes> 
+    </Routes>
   </BrowserRouter>
   </div>
     
