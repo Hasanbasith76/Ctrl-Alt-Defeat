@@ -6,7 +6,6 @@ import auth from './oauth';
 import Homepage from './Homepage';
 import Signup from './Signup';
 import Dashboard from './Dashboard'; 
-import Results from './Result';
 import Compatibility from './Compatibility';
 import Instructions from './Instructions';
 import Testwindow from './Testwindow';
@@ -14,17 +13,19 @@ import Thankyou from './Thankyou';
 import Checkwindow from './Checkwindow';
 import reportWebVitals from './reportWebVitals';
 import Signin from './Signin';
+import { AuthProvider } from './context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <div>
+    <AuthProvider>
+
   <BrowserRouter>
     <Routes>
-        <Route path='/' Component={Homepage} />
+        <Route exact path='/' Component={Homepage} />
         <Route path='/signup' Component={Signup} />
-        <Route path='/signin' Component={Signin} />
+        <Route path='/signin' element={<Signin/>} />
         <Route path='/Dashboard' Component={Dashboard} />
-        <Route path='/reports' Component={Results} />
         <Route path='/Compatibility' Component={Compatibility} />
         <Route path='/Instructions' Component={Instructions} />
         <Route path='/Checkwindow' Component={Checkwindow} />
@@ -32,6 +33,7 @@ root.render(
         <Route path='/Thankyou' Component={Thankyou} />
     </Routes> 
   </BrowserRouter>
+  </AuthProvider>
   </div>
     
         

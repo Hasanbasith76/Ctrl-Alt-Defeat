@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [isEmailUser , setIsEmailUser ] = useState(false);
   const [isGoogleUser , setIsGoogleUser ] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, initializeUser );
@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
       );
       setIsGoogleUser (isGoogle);
 
-      setUserLoggedIn(true);
+      setUserLoggedIn(false);
 
       // Add user to Firestore if not already present
       const db = getFirestore();

@@ -34,19 +34,17 @@ input{
     width: 150px;
     margin-right: 70px;
 }
-.p{
-    font-size: small;
-    margin-top: 10px;
-    margin-left: 250px;
-}
 .f{
     margin-left: 535px;
 }
 .Google{
-    margin-left: -21px ;
-    margin-left: 310px;
+    margin-right: 70px ;
+    margin-left: 0px;
 }
 .Custom-google{
     margin-left: 300px;
-    padding: 0px;
+    padding: 10px;
+}
+.para{
+    margin-left: 250px;
 }

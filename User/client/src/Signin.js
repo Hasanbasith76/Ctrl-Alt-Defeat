@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import './Signin.css';
 import { useAuth } from './context';
 import { doSignInWithEmailAndPassword, doSignInWithGoogle } from './authfb';
@@ -77,31 +77,15 @@ function Signin() {
         </form>
         <p className="f">forgot your password?</p>
         <br/>
-        <a href="/Dashboard">
-            <button className="Submit-btn">Continue to Dashboard</button>
-            <a href="/signin/oauth">
-                <h4 className="h4-signup">
-                <div className="Google">
-                <GoogleLogin
-                onSuccess={credentialResponse => {
-                    console.log(credentialResponse);
-                }}
-                onError={() => {
-                    console.log('Login Failed');
-                }}
-                />
-                </div></h4>
-            </a>
-        </a>
-        
         <br />
         <GoogleOAuthProvider>
             <button className="Custom-google" onClick={onGoogleSignIn}>
+              <img src={require('./Google-Symbol.png')} width={30} className='Google-style'/>
               {isSigningIn ? 'Signing In...' : 'Sign in With Google'}
             </button>
         </GoogleOAuthProvider>
-        <a href="/signup">
-          <p className="p">New here? Create an account and start shopping</p>
+        <a href='signup'>
+          <p className='para'>New Here? Sign up for exclusive content...</p>
         </a>
       </div>
   );
