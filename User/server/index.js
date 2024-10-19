@@ -81,15 +81,18 @@ app.post('/api/register', (req, res) => {
 });
 
 // Create a route to handle user login
-app.post('/api/login', (req, res) => {
+// API endpoint to handle login requests
+app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  User.findOne({ email }, (err, user) => {
+  User.findOne({ email }, async (err, user) => {
     if (err || !user) {
       res.status(401).send('Invalid email or password');
     } else {
-      const isValid = bcrypt.compareSync(password, user.password);
+      const isValid = await bcrypt.compare(password, user.password);
       if (isValid) {
-        res.send('Login successful!');
+        // Generate a Firebase token
+        const token = await firebase.auth().createCustomToken(user._id);
+        res.json({ token });
       } else {
         res.status(401).send('Invalid email or password');
       }

@@ -111,7 +111,7 @@ const Aiproctor = () => {
 
       const averageVolume = audioDataArrayRef.current.reduce((a, b) => a + b, 0) / audioDataArrayRef.current.length;
 
-      if (averageVolume > 15) {
+      if (averageVolume > 20) {
         setAudioStatus("Audio levels are high.");
       } else {
         setAudioStatus("Audio levels are normal.");
