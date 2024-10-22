@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
-import { auth } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase"; // Import your Firebase configuration
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore"; // Import Firestore functions
 
@@ -13,57 +13,53 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser , setCurrentUser ] = useState(null);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const [isEmailUser , setIsEmailUser ] = useState(false);
-  const [isGoogleUser , setIsGoogleUser ] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isEmailUser, setIsEmailUser] = useState(true);
+  const [isGoogleUser , setIsGoogleuser ] = useState(false);
+  const [loading, setLoading ]=  useState(false);
+
+
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, initializeUser );
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser (user);
+        setUserLoggedIn(false); // Set to false until user explicitly signs in
+      } else {
+        setCurrentUser (null);
+        setUserLoggedIn(false); // Ensure userLoggedIn is false when there's no user
+      }
+      setLoading(false);
+    });
     return unsubscribe;
   }, []);
 
-  async function initializeUser (user) {
-    if (user) {
-      setCurrentUser ({ ...user });
-
-      // Check if provider is email and password login
-      const isEmail = user.providerData.some(
-        (provider) => provider.providerId === "password"
-      );
-      setIsEmailUser (isEmail);
-
-      // Check if the auth provider is Google
-      const isGoogle = user.providerData.some(
-        (provider) => provider.providerId === GoogleAuthProvider.PROVIDER_ID
-      );
-      setIsGoogleUser (isGoogle);
-
-      setUserLoggedIn(false);
-
-      // Add user to Firestore if not already present
-      const db = getFirestore();
-      const userRef = doc(db, "users", user.uid);
-      await setDoc(userRef, {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        createdAt: new Date(),
-      }, { merge: true }); // Use merge to avoid overwriting existing data
-    } else {
-      setCurrentUser (null);
-      setUserLoggedIn(false);
+  const handleSignIn = async (email, password) => {
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, email, password);
+      setUserLoggedIn(true); // Set userLoggedIn to true only after successful sign-in
+    } catch (error) {
+      console.error("Error signing in:", error);
+      throw new Error(error.message || 'Failed to sign in. Please check your credentials and try again.');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    setLoading(false);
-  }
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setUserLoggedIn(false); // Reset userLoggedIn state
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const value = {
     userLoggedIn,
-    isEmailUser ,
-    isGoogleUser ,
     currentUser ,
-    setCurrentUser ,
+    handleSignIn,
+    handleSignOut,
   };
 
   return (

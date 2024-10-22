@@ -16,7 +16,7 @@ const WebcamComponent = () => {
           width: 450,
           height: 300,
           image_format: 'jpeg',
-          jpeg_quality: 460,
+          jpeg_quality: 90,
         });
 
         window.Webcam.attach(webcamRef.current);
@@ -42,15 +42,16 @@ const WebcamComponent = () => {
 
   const uploadImage = (data_uri) => {
     const formData = new FormData();
-    formData.append('image', dataURItoBlob(data_uri));
+    const blob = dataURItoBlob(data_uri);
+    formData.append('image', blob, 'captured_image.jpg');
 
     fetch('/api/upload-image', {
       method: 'POST',
       body: formData,
     })
       .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
+      .then((data) => console.log('Image uploaded:', data))
+      .catch((error) => console.error('Error uploading image:', error));
   };
 
   const dataURItoBlob = (dataURI) => {
@@ -74,7 +75,7 @@ const WebcamComponent = () => {
       </div>
       {image && (
         <div id='results'>
-          <img src={image} />
+          <img src={image} alt="Captured" />
         </div>
       )}
     </div>

@@ -1,108 +1,83 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as tf from '@tensorflow/tfjs';
+import * as blazeface from '@tensorflow-models/blazeface';
 
 const Aiproctor = () => {
   const videoRef = useRef(null);
-  const statusRef = useRef(null);
+  const modelRef = useRef(null);
   const audioContextRef = useRef(null);
   const audioAnalyzerRef = useRef(null);
   const audioDataArrayRef = useRef(new Uint8Array(256));
 
-  const [status, setStatus] = useState('');
-  const [faceStatus, setFaceStatus] = useState('face detected.');
+  const [faceStatus, setFaceStatus] = useState('Initializing...');
   const [audioStatus, setAudioStatus] = useState('Audio levels are normal.');
-  const [leftEyeX, setLeftEyeX] = useState(0);
-  const [rightEyeX, setRightEyeX] = useState(0);
-  const [noseTipX, setNoseTipX] = useState(0);
-  const [leftEyeY, setLeftEyeY] = useState(0);
-  const [rightEyeY, setRightEyeY] = useState(0);
-  const [noseTipY, setNoseTipY] = useState(0);
 
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        videoRef.current.srcObject = stream;
+    const setupCamera = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      videoRef.current.srcObject = stream;
 
-        // Initialize audio context and analyzer
-        audioContextRef.current = new AudioContext();
-        audioAnalyzerRef.current = audioContextRef.current.createAnalyser();
-        audioDataArrayRef.current = new Uint8Array(audioAnalyzerRef.current.frequencyBinCount);
-
-        // Initialize audio monitoring
-        const audioSource = audioContextRef.current.createMediaStreamSource(stream);
-        audioSource.connect(audioAnalyzerRef.current);
-      })
-      .catch(error => console.error('Error getting user media:', error));
-  }, []);
-
-  useEffect(() => {
-    const loadModelAsync = async () => {
-      const model = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
-      detectFaces(model);
+      // Initialize audio context and analyzer
+      audioContextRef.current = new AudioContext();
+      audioAnalyzerRef.current = audioContextRef.current.createAnalyser();
+      const audioSource = audioContextRef.current.createMediaStreamSource(stream);
+      audioSource.connect(audioAnalyzerRef.current);
     };
-    loadModelAsync();
+
+    const loadModel = async () => {
+      if (!modelRef.current) {
+        modelRef.current = await blazeface.load();
+      }
+    };
+
+    setupCamera();
+    loadModel().then(() => {
+      detectFaces();
+      monitorAudioLevels();
+    });
+
+    return () => {
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
+    };
   }, []);
 
-  const detectFaces = async (model) => {
-    try {
-      const predictions = await model.estimateFaces({
-        input: videoRef.current,
-        returnTensors: false,
-        flipHorizontal: false
-      });
+  const detectFaces = async () => {
+    if (videoRef.current && modelRef.current) {
+      const predictions = await modelRef.current.estimateFaces(videoRef.current, false);
 
       if (predictions.length > 0) {
         const face = predictions[0];
+        const nose = face.landmarks[2];
+        const leftEye = face.landmarks[1];
+        const rightEye = face.landmarks[0];
 
-        let faceFeatures = {
-          noseTip: face.landmarks[0],
-          leftEye: face.landmarks[1],
-          rightEye: face.landmarks[2]
-        };
+        const eyeMidpointX = (leftEye[0] + rightEye[0]) / 2;
+        const eyeMidpointY = (leftEye[1] + rightEye[1]) / 2;
 
-        const noseTip = faceFeatures.noseTip;
-        const leftEye = faceFeatures.leftEye;
-        const rightEye = faceFeatures.rightEye;
+        const horizontalThreshold = 20;
+        const verticalThreshold = 25;
 
-        setLeftEyeX(leftEye.x);
-        setRightEyeX(rightEye.x);
-        setNoseTipX(noseTip.x);
-        setLeftEyeY(leftEye.y);
-        setRightEyeY(rightEye.y);
-        setNoseTipY(noseTip.y);
+        let status = "Normal";
 
-        let faceStatus;
-        if (Math.abs(leftEyeX - rightEyeX) < 10) {
-          if (noseTipY < leftEyeY && noseTipY < rightEyeY) {
-            faceStatus = "Suspicious activity detected - Looking Up";
-          } else if (noseTipY > leftEyeY && noseTipY > rightEyeY) {
-            faceStatus = "Suspicious activity detected - Looking Down";
-          } else {
-            faceStatus = "Normal";
-          }
-        } else if (leftEyeX < rightEyeX) {
-          if (noseTipX < leftEyeX) {
-            faceStatus = "Suspicious activity detected - Looking Left";
-          } else {
-            faceStatus = "Suspicious activity detected - Looking Right";
-          }
-        } else {
-          if (noseTipX < rightEyeX) {
-            faceStatus = "Suspicious activity detected - Looking Right";
-          } else {
-            faceStatus = "Suspicious activity detected - Looking Left";
-          }
+        if (nose[0] < eyeMidpointX - horizontalThreshold) {
+          status = "Suspicious activity detected - Looking Left";
+        } else if (nose[0] > eyeMidpointX + horizontalThreshold) {
+          status = "Suspicious activity detected - Looking Right";
+        } else if (nose[1] < eyeMidpointY - verticalThreshold) {
+          status = "Suspicious activity detected - Looking Up";
+        } else if (nose[1] > eyeMidpointY + verticalThreshold) {
+          status = "Suspicious activity detected - Looking Down";
         }
 
-        setFaceStatus(faceStatus);
+        setFaceStatus(status);
       } else {
         setFaceStatus("No face detected.");
       }
-
-      requestAnimationFrame(() => detectFaces(model));
-    } catch (error) {
-      console.error(error);
     }
+
+    requestAnimationFrame(detectFaces);
   };
 
   const monitorAudioLevels = () => {
@@ -111,7 +86,7 @@ const Aiproctor = () => {
 
       const averageVolume = audioDataArrayRef.current.reduce((a, b) => a + b, 0) / audioDataArrayRef.current.length;
 
-      if (averageVolume > 15) {
+      if (averageVolume > 60) {
         setAudioStatus("Audio levels are high.");
       } else {
         setAudioStatus("Audio levels are normal.");
@@ -129,15 +104,10 @@ const Aiproctor = () => {
 
   return (
     <div>
-      <video ref={videoRef} width="350" height="250" autoPlay muted/>
-      <p>
-        Face Status: {faceStatus}
-      </p>
-      <p>
-        Audio Status: {audioStatus}
-      </p>
-    </div>
-  );
+      <video ref={videoRef} width="350" height="250" autoPlay muted />
+      <p>Face Status: {faceStatus}</p>
+      <p>Audio Status: {audioStatus}</p>
+    </div> );
 };
 
 export default Aiproctor;

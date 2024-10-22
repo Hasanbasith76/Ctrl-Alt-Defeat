@@ -1,99 +1,143 @@
-let video = document.getElementById("video");
-let statusText = document.getElementById("status");
-let audioContext, audioAnalyzer, audioDataArray;
+import React, { useEffect, useRef, useState } from 'react';
+import * as tf from '@tensorflow/tfjs';
 
-// Start video stream from webcam
-navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    .then((stream) => {
-        video.srcObject = stream;
-        setupAudioProcessing(stream);
-        startFaceDetection();
-    })
-    .catch((err) => console.error("Error accessing media devices.", err));
+const Aiproctor = () => {
+  const videoRef = useRef(null);
+  const statusRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const audioAnalyzerRef = useRef(null);
+  const audioDataArrayRef = useRef(new Uint8Array(256));
 
-// Initialize the face detection model
-async function startFaceDetection() {
-    // Load the face landmarks detection model
-    const model = await faceLandmarksDetection.load(
-        faceLandmarksDetection.SupportedPackages.mediapipeFacemesh
-    );
+  const [status, setStatus] = useState('');
+  const [faceStatus, setFaceStatus] = useState('face detected.');
+  const [audioStatus, setAudioStatus] = useState('Audio levels are normal.');
+  const [leftEyeX, setLeftEyeX] = useState(0);
+  const [rightEyeX, setRightEyeX] = useState(0);
+  const [noseTipX, setNoseTipX] = useState(0);
+  const [leftEyeY, setLeftEyeY] = useState(0);
+  const [rightEyeY, setRightEyeY] = useState(0);
+  const [noseTipY, setNoseTipY] = useState(0);
 
-    // Start detecting faces
-    detectFaces(model);
-}
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        videoRef.current.srcObject = stream;
 
-// Detect faces and check for head pose direction
-async function detectFaces(model) {
-    const predictions = await model.estimateFaces({
-        input: video,
+        // Initialize audio context and analyzer
+        audioContextRef.current = new AudioContext();
+        audioAnalyzerRef.current = audioContextRef.current.createAnalyser();
+        audioDataArrayRef.current = new Uint8Array(audioAnalyzerRef.current.frequencyBinCount);
+
+        // Initialize audio monitoring
+        const audioSource = audioContextRef.current.createMediaStreamSource(stream);
+        audioSource.connect(audioAnalyzerRef.current);
+      })
+      .catch(error => console.error('Error getting user media:', error));
+  }, []);
+
+  useEffect(() => {
+    const loadModelAsync = async () => {
+      const model = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/mobilenet_v1_0.25_224/model.json');
+      detectFaces(model);
+    };
+    loadModelAsync();
+  }, []);
+
+  const detectFaces = async (model) => {
+    try {
+      const predictions = await model.estimateFaces({
+        input: videoRef.current,
         returnTensors: false,
         flipHorizontal: false
-    });
+      });
 
-    if (predictions.length > 0) {
+      if (predictions.length > 0) {
         const face = predictions[0];
 
-        // Extract keypoints from face detection (using landmarks for nose)
-        const keypoints = face.keypoints;
+        let faceFeatures = {
+          noseTip: face.landmarks[0],
+          leftEye: face.landmarks[1],
+          rightEye: face.landmarks[2]
+        };
 
-        // Find the positions of specific keypoints for the nose, eyes, etc.
-        const noseTip = keypoints.find((point) => point.name === "noseTip");
-        const leftEye = keypoints.find((point) => point.name === "leftEye");
-        const rightEye = keypoints.find((point) => point.name === "rightEye");
+        const noseTip = faceFeatures.noseTip;
+        const leftEye = faceFeatures.leftEye;
+        const rightEye = faceFeatures.rightEye;
 
-        if (noseTip && leftEye && rightEye) {
-            // Calculate nose position and infer head direction based on keypoint x, y positions
-            const noseX = noseTip.x;
-            const noseY = noseTip.y;
+        setLeftEyeX(leftEye.x);
+        setRightEyeX(rightEye.x);
+        setNoseTipX(noseTip.x);
+        setLeftEyeY(leftEye.y);
+        setRightEyeY(rightEye.y);
+        setNoseTipY(noseTip.y);
 
-            // Simplified logic for direction
-            if (noseX < 200) {
-                statusText.innerText = "Status: Suspicious activity detected - Looking Left";
-            } else if (noseX > 440) {
-                statusText.innerText = "Status: Suspicious activity detected - Looking Right";
-            } else if (noseY < 150) {
-                statusText.innerText = "Status: Suspicious activity detected - Looking Up";
-            } else if (noseY > 350) {
-                statusText.innerText = "Status: Suspicious activity detected - Looking Down";
-            } else {
-                statusText.innerText = "Status: Normal";
-            }
+        let faceStatus;
+        if (Math.abs(leftEyeX - rightEyeX) < 0) {
+          if (noseTipY < leftEyeY && noseTipY < rightEyeY) {
+            faceStatus = "Suspicious activity detected - Looking Up";
+          } else if (noseTipY > leftEyeY && noseTipY > rightEyeY) {
+            faceStatus = "Suspicious activity detected - Looking Down";
+          } else {
+            faceStatus = "Normal";
+          }
+        } else if (leftEyeX < rightEyeX) {
+          if (noseTipX < leftEyeX) {
+            faceStatus = "Suspicious activity detected - Looking Left";
+          } else {
+            faceStatus = "Suspicious activity detected - Looking Right";
+          }
         } else {
-            statusText.innerText = "Status: Unable to detect face landmarks.";
+          if (noseTipX < rightEyeX) {
+            faceStatus = "Suspicious activity detected - Looking Right";
+          } else {
+            faceStatus = "Suspicious activity detected - Looking Left";
+          }
         }
-    } else {
-        statusText.innerText = "Status: No face detected.";
+
+        setFaceStatus(faceStatus);
+      } else {
+        setFaceStatus("No face detected.");
+      }
+
+      requestAnimationFrame(() => detectFaces(model));
+    } catch (error) {
+      console.error(error);
     }
+  };
 
-    // Continuously detect faces in the video stream
-    requestAnimationFrame(() => detectFaces(model));
-}
+  const monitorAudioLevels = () => {
+    try {
+      audioAnalyzerRef.current.getByteFrequencyData(audioDataArrayRef.current);
 
-// Set up audio processing to detect suspicious audio levels
-function setupAudioProcessing(stream) {
-    audioContext = new AudioContext();
-    const source = audioContext.createMediaStreamSource(stream);
-    audioAnalyzer = audioContext.createAnalyser();
-    audioAnalyzer.fftSize = 512;
+      const averageVolume = audioDataArrayRef.current.reduce((a, b) => a + b, 0) / audioDataArrayRef.current.length;
 
-    const bufferLength = audioAnalyzer.frequencyBinCount;
-    audioDataArray = new Uint8Array(bufferLength);
+      if (averageVolume > 19) {
+        setAudioStatus("Audio levels are high.");
+      } else {
+        setAudioStatus("Audio levels are normal.");
+      }
 
-    source.connect(audioAnalyzer);
+      requestAnimationFrame(monitorAudioLevels);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
+  useEffect(() => {
     monitorAudioLevels();
-}
+  }, []);
 
-// Monitor audio levels and detect suspicious activity
-function monitorAudioLevels() {
-    audioAnalyzer.getByteFrequencyData(audioDataArray);
+  return (
+    <div>
+      <video ref={videoRef} width="350" height="250" autoPlay muted/>
+      <p>
+        Face Status: {faceStatus}
+      </p>
+      <p>
+        Audio Status: {audioStatus}
+      </p>
+    </div>
+  );
+};
 
-    const averageVolume = audioDataArray.reduce((a, b) => a + b) / audioDataArray.length;
-
-    if (averageVolume > 150) {
-        statusText.innerText = "Status: Suspicious activity detected - High Audio Levels";
-    }
-
-    setTimeout(monitorAudioLevels, 500);
-}
-
+export default Aiproctor;
