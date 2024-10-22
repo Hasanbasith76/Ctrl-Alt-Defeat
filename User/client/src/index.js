@@ -19,24 +19,21 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <div>
     <AuthProvider>
-
-  <BrowserRouter>
-    <Routes>
-        <Route exact path='/' Component={Homepage} />
-        <Route path='/signup' Component={Signup} />
-        <Route path='/signin' element={<Signin/>} />
-        <Route path='/Dashboard' Component={Dashboard} />
-        <Route path='/Compatibility' Component={Compatibility} />
-        <Route path='/Instructions' Component={Instructions} />
-        <Route path='/Checkwindow' Component={Checkwindow} />
-        <Route path='/Testwindow' Component={Testwindow} />
-        <Route path='/Thankyou' Component={Thankyou} />
-    </Routes> 
-  </BrowserRouter>
+        <BrowserRouter>
+          <Routes>
+              <Route exact path='/' Component={Homepage} />
+              <Route path='/signup' Component={Signup} />
+              <Route path='/signin' element={<Signin/>} />
+              <Route path='/Dashboard' Component={Dashboard} />
+              <Route path='/Compatibility' Component={Compatibility} />
+              <Route path='/Instructions' Component={Instructions} />
+              <Route path='/Checkwindow' Component={Checkwindow} />
+              <Route path='/Testwindow' Component={Testwindow} />
+              <Route path='/Thankyou' Component={Thankyou} />
+          </Routes> 
+        </BrowserRouter>
   </AuthProvider>
-  </div>
-    
-        
+  </div>    
 );
 
 // If you want to start measuring performance in your app, pass a function
