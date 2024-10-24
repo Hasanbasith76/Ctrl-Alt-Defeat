@@ -3,7 +3,7 @@ import './Homepage.css';
 
 export default function Homepage(){
     return(
-        <div className="container">
+        <div className="container1">
             <div className="Header">
                 <ul className="items">
                     <li className="s">

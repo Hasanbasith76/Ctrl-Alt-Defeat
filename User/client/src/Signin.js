@@ -5,7 +5,7 @@ import './Signin.css';
 import { useAuth } from './context';
 import { doSignInWithGoogle } from './authfb';
 
-function Signin() {
+export default function Signin() {
   const { userLoggedIn, handleSignIn } = useAuth(); // Use handleSignIn from context
   const navigate = useNavigate();
 
@@ -46,56 +46,55 @@ function Signin() {
       });
     }
   };
+  const [isActive, setIsActive] = useState(false);
+
+  const handleRegisterClick = () => {
+    setIsActive(true);
+  };
+
+  const handleLoginClick = () => {
+    setIsActive(false);
+  };
 
   return (
-    <div className="Signin">
-      <h1 className="Greet">Welcome Back, User!</h1>
-      <p>Sign in with your email address</p>
-      <form onSubmit={onSubmit}>
-        <label className="lbl">Email</label>
-        <br />
-        <input
-          type="text"
-          placeholder="Enter your email address"
-          className="email-input"
-          required
-          id="username"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <br />
-        <br />
-        <label className="lbl">Password</label>
-        <br />
-        <input
-          type="password"
-          placeholder="Enter your password"
-          className="password-input"
-          required
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br />
-        {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-        <button type="submit" className="Submit-btn">
-          {isSigningIn ? 'Signing In...' : 'Login'}
-        </button>
-      </form>
-      <p className="f">forgot your password?</p>
-      <br />
-      <br />
-      <GoogleOAuthProvider>
-        <button className="Custom-google" onClick={onGoogleSignIn}>
-          <img src={require('./Google-Symbol.png')} width={30} className='Google-style' />
-          {isSigningIn ? 'Signing In...' : 'Sign in With Google'}
-        </button>
-      </GoogleOAuthProvider>
-      <a href='signup'>
-        <p className='para'>New Here? Sign up for exclusive content...</p>
-      </a>
-    </div>
+    <div className="whole">
+        <div className={`container ${isActive ? "active" : ""}`} id="container">
+          <div className={`form-container sign-up ${isActive ? "" : "hidden"}`}>
+            <form>
+              <h1>Create Account</h1>
+              <span>Or</span>
+              <input type="text" placeholder="Name" />
+              <input type="email" placeholder="Email" />
+              <input type="password" placeholder="Password" />
+              <input type="password" placeholder="Confirm Password" />
+              <button type="submit">Sign Up</button>
+            </form>
+          </div>
+          <div className={`form-container sign-in ${isActive ? "hidden" : ""}`}>
+            <form onSubmit={onSubmit}>
+              <h1>Sign In</h1>
+              <span>Or</span>
+              <input type="email" placeholder="Email" id="username" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <input type="password" placeholder="Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <a href="#">Forgot Password?</a>
+              <button type="submit">Sign In</button>
+            </form>
+          </div>
+          <div className="toggle-container">
+            <div className="toggle">
+              <div className="toggle-panel toggle-left">
+                <h1>Welcome Back!</h1>
+                <p>Enter the personal details to use all of site features</p>
+                <button onClick={handleLoginClick}>Sign In</button>
+              </div>
+              <div className="toggle-panel toggle-right">
+                <h1>Hello, User!</h1>
+                <p>Register with personal details to use all of site features</p>
+                <button onClick={handleRegisterClick}>Sign Up</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
   );
 }
-
-export default Signin;

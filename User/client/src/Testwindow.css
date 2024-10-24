@@ -5,7 +5,9 @@
     text-align: center;
 }
 .container-test{
-    margin-left: 50px;
+    margin-left: 100px;
+    margin-bottom: 70px;
+    margin-right: 1000px;
 }
 .btn-next{
     background-color: #188903;
@@ -17,11 +19,26 @@
     height: 44px;
     align-content: center;
     padding: 5px;
-    margin-left: 300px;
+    margin-left: 100px;
     margin-top: 10px;
     width: 15vw;
 }
 .btn-prev{
+    background-color: rgb(205, 103, 20);
+    border: none;
+    color: #000000;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 10px;
+    height: 44px;
+    align-content: center;
+    padding: 5px;
+    margin-left: -50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 15vw;
+}
+.btn-submit{
     background-color: red;
     border: none;
     color: #000000;
@@ -31,8 +48,8 @@
     height: 44px;
     align-content: center;
     padding: 5px;
-    margin-left: 250px;
-    margin-top: 0px;
+    margin-left: -50px;
+    margin-top: 10px;
     margin-bottom: 10px;
     width: 15vw;
 }
@@ -47,8 +64,14 @@
     max-width: 50px;
 }
 .proper-align{
-    display: ;
+    display: flex;
+    column-gap: 300px;
+    margin-top: 95px;
 }
 .webcam1{
     display: block;
+}
+.buttons{
+    display: flex;
+    margin-top: 50px;
 }
