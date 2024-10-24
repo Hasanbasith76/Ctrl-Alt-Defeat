@@ -62,13 +62,13 @@ const Aiproctor = () => {
         let status = "Normal";
 
         if (nose[0] < eyeMidpointX - horizontalThreshold) {
-          status = "Suspicious activity detected - Looking Left";
+          status = "Suspicious activity - Looking Left";
         } else if (nose[0] > eyeMidpointX + horizontalThreshold) {
-          status = "Suspicious activity detected - Looking Right";
+          status = "Suspicious activity - Looking Right";
         } else if (nose[1] < eyeMidpointY - verticalThreshold) {
-          status = "Suspicious activity detected - Looking Up";
+          status = "Suspicious activity - Looking Up";
         } else if (nose[1] > eyeMidpointY + verticalThreshold) {
-          status = "Suspicious activity detected - Looking Down";
+          status = "Suspicious activity - Looking Down";
         }
 
         setFaceStatus(status);

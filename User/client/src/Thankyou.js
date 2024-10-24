@@ -4,8 +4,11 @@ import './Thankyou.css';
 export default function Thankyou(){
     return(
         <div className="Thankyou">
-            <h1 className="content">thank you! your Test has been Submitted</h1>
-            <button className="DB-btn">Go to Dashboard</button>
+            <img src={require("./submitted.webp")} width={300} height={300} className="imagethank"/>
+            <h1 className="content">Thank you! your Test has been Submitted. We are processing your application.</h1>
+                <a href="/">
+                    <button className="DB-btn">Logout</button>
+                </a>
         </div>
     )
 }

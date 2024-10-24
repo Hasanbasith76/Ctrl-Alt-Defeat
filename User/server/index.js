@@ -31,8 +31,6 @@ const User = mongoose.model('User ', userSchema);
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost/mydatabse', { useNewUrlParser: true, useUnifiedTopology: true });
 
-// Define the User model
-
 
 userSchema.pre('save', function(next) {
   const user = this;
@@ -44,8 +42,6 @@ userSchema.pre('save', function(next) {
     next();
   });
 });
-
-
 
 app.use(express.json());
 
@@ -180,9 +176,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/images', (req, res) => {
   const images = fs.readdirSync('./uploads/');
   res.json(images);
-});
 
-// Start the server
 const port = 3000;
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

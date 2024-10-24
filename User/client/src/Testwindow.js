@@ -25,7 +25,7 @@ export default function Testwindow() {
             },
             {
                 id: 2,
-                text: "Which programming language is often used for client-side web development?",
+                text: "Which of these is a scripting language?",
                 options: [
                     "Python",
                     "Java",
@@ -99,20 +99,29 @@ export default function Testwindow() {
                         </>
                     )}
                     <br/>
-                    <button 
-                        className="btn-prev" 
-                        onClick={previousQuestion} 
-                        disabled={currentQuestionIndex === 0}
-                    >
-                        Previous
+                    <div className="buttons">
+                        <button 
+                            className="btn-prev" 
+                            onClick={previousQuestion} 
+                            disabled={currentQuestionIndex === 0}
+                        >
+                            Previous
+                        </button>
+                        <button 
+                            className="btn-next" 
+                            onClick={nextQuestion} 
+                            disabled={currentQuestionIndex === questions.length - 1}
+                        >
+                            Next
+                        </button>
+                        
+                    </div>
+                    <button className="btn-submit">
+                        <a href="Thankyou">
+                        End test
+                        </a>
                     </button>
-                    <button 
-                        className="btn-next" 
-                        onClick={nextQuestion} 
-                        disabled={currentQuestionIndex === questions.length - 1}
-                    >
-                        Next
-                    </button>
+
                 </div>   
             </div>
             {/*<WebcamComponent Action={{pro:"Live Recording"}} className="webcam1"/>*/}
