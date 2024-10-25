@@ -97,4 +97,18 @@
       margin-bottom: 20px;
     }
   }
-  
+  .design-dash{
+    display: flex;
+    column-gap: 100px;
+  }
+  .design-dash :hover{
+    transform: translateY(-10px);
+    transition-delay: 0.1s;
+  }
+  .title-heading{
+    color: aliceblue;
+  }
+  .link{
+    text-decoration: none;
+    text-align: center;
+  }

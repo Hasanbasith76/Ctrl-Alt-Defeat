@@ -7,6 +7,10 @@ const path = require('path');
 const upload = multer({ dest: './uploads/' });
 const fs = require('fs');
 const firebase = require('firebase-admin');
+const cors = require('cors');
+
+app.use(cors());
+app.use(express.json());
 
 // Initialize Firebase Admin SDK
 firebase.initializeApp({
@@ -38,7 +42,7 @@ const questionSchema = new mongoose.Schema({
 const Question = mongoose.model('Question', questionSchema);
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost/mydatabase', {
+mongoose.connect('mongodb+srv://myAtlasDBUser:12345@myatlasclusteredu.o9cgxvh.mongodb.net/?retryWrites=true&w=majority&appName=myAtlasClusterEDU', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
@@ -60,8 +64,6 @@ userSchema.pre('save', function(next) {
     next();
   });
 });
-
-app.use(express.json());
 
 // Create a route to handle user registration
 app.post('/api/register', (req, res) => {
@@ -104,12 +106,14 @@ app.post('/api/upload-image', upload.single('image'), (req, res) => {
 });
 
 // API endpoint to load questions
-app.get('/api/questions', async (req, res) => {
+app.post('/api/questions', async (req, res) => {
   try {
-    const questions = await Question.find();
-    res.json(questions);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to load questions' });
+      const { question, options } = req.body;
+      const newQuestion = new Question({ question, options });
+      await newQuestion.save();
+      res.status(201).json({ message: 'Question created successfully' });
+  } catch (error) {
+      res.status(500).json({ message: 'Error creating question', error });
   }
 });
 
@@ -164,12 +168,42 @@ const insertQuestions = async () => {
     console.error('Error inserting sample questions:', err);
   }
 };
+
+app.post('/api/questions', (req, res) => {
+  const { question, options } = req.body;
+  // Here you would typically insert the question into your database
+  questionsDatabase.push({ question, options });
+  res.status(201).send({ message: 'Question added successfully!' });
+});
+
+// API endpoint to fetch all questions
+app.get('/api/questions', async (req, res) => {
+  try {
+    const questions = await Question.find(); // Fetch all questions from the database
+    res.status(200).json(questions); // Send the questions as a JSON response
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching questions', error });
+  }
 });
 
 // Create a route to retrieve the uploaded images
 app.get('/api/images', (req, res) => {
   const images = fs.readdirSync('./uploads/');
   res.json(images);
+});
+
+// Sample data
+const candidates = [
+    { id: 1, name: 'Alice', score: 85, date: '2023-10-01' },
+    { id: 2, name: 'Bob', score: 92, date: '2023-10-02' },
+    { id: 3, name: 'Charlie', score: 78, date: '2023-10-01' },
+    { id: 4, name: 'David', score: 88, date: '2023-10-03' },
+    { id: 5, name: 'Eva', score: 95, date: '2023-10-02' },
+];
+
+// Endpoint to get candidates
+app.get('/api/candidates', (req, res) => {
+    res.json(candidates);
 });
 
 app.listen(3000, () => {
