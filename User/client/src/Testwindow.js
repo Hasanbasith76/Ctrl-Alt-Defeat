@@ -6,9 +6,10 @@ import axios from 'axios';
 export default function TestWindow() {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({}); // State to track selected answers
+  const [selectedAnswers, setSelectedAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showWarning, setShowWarning] = useState(false); // State for warning visibility
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -22,7 +23,26 @@ export default function TestWindow() {
       }
     };
     loadQuestions();
+
+    // Handle visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        setShowWarning(true); // Show warning when tab is hidden
+      } else {
+        // Do not hide the warning automatically; it will remain until closed
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange); // Clean up the event listener
+    };
   }, []);
+
+  const closeWarning = () => {
+    setShowWarning(false); // Function to close the warning
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -43,7 +63,7 @@ export default function TestWindow() {
     const { value } = event.target;
     setSelectedAnswers({
       ...selectedAnswers,
-      [currentQuestionIndex]: value // Store the selected answer for the current question
+      [currentQuestionIndex]: value
     });
   };
 
@@ -65,10 +85,10 @@ export default function TestWindow() {
                     <li key={index}>
                       <input
                         type="radio"
-                        name={`q${currentQuestion._id}`} // Use question ID for unique name
-                        value={option} // Store the option value
+                        name={`q${currentQuestion._id}`}
+                        value={option}
                         className="bullet"
-                        checked={selectedAnswers[currentQuestionIndex] === option} // Check if this option is selected
+                        checked={selectedAnswers[currentQuestionIndex] === option}
                         onChange={handleOptionChange}
                       />
                       {option}
@@ -109,6 +129,13 @@ export default function TestWindow() {
           )}
         </div>
       </div>
+      {showWarning && (
+        <div className="popup-warning">
+          <h2>Warning!</h2>
+          <p>Do not switch tabs!</p>
+          <button onClick={ closeWarning}>Close</button>
+        </div>
+      )}
     </div>
   );
 }
