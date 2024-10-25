@@ -13,7 +13,7 @@ export default function Homepage(){
                     <li className="s"><a href="/Support">Support</a></li>
                     <li className="s"><a href="/Contact">Contact</a></li>
                     <li className="s" id="SignIn"><a href="/signin">Sign In</a></li>
-                    <li className="btn1"><a href="/signup">Create an account</a></li>
+                    <li className="btn1"><a href="/signin_admin">Login As Admin</a></li>
                 </ul>
                 <h1 className="heading">Welcome to AccessEase,Your Portal to Assessment and Performance Tracking </h1>
                 <p className="paragraph">Join us for a seamless, secure login experience tailored for you.</p>

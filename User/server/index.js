@@ -164,6 +164,13 @@ const insertQuestions = async () => {
     console.error('Error inserting sample questions:', err);
   }
 };
+});
+
+// Create a route to retrieve the uploaded images
+app.get('/api/images', (req, res) => {
+  const images = fs.readdirSync('./uploads/');
+  res.json(images);
+});
 
 app.listen(3000, () => {
   console.log('Server started on port 3000');
