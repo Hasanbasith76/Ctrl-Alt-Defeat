@@ -6,6 +6,7 @@
     "bootstrap": "^5.3.3",
     "db": "^6.0.3",
     "faceapi": "^1.0.1",
+    "firebase": "^11.0.1",
     "react-bootstrap": "^2.10.4"
   }
 }
