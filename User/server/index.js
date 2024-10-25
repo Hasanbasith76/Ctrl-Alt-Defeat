@@ -176,6 +176,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/images', (req, res) => {
   const images = fs.readdirSync('./uploads/');
   res.json(images);
+});
 
 const port = 3000;
 app.listen(port, () => {
