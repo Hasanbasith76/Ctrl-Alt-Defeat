@@ -12,7 +12,7 @@ export default function Checkwindow(){
             <h1>Instructions:</h1>
             <ul>
                 <li>Please allow web cam permission for this site to check your camera is properly working or not</li>
-                <li>Please click on<b>"Capture Photo"</b>button to see the captured photo. if the captured photo is neat and clear then click on the<b>"Continue to audio test"</b>button to check your machine's audio.</li>
+                <li>Please click on<b>"Capture Photo"</b>button to see the captured photo. if the captured photo is neat and clear then click Start Assessment Button to start the Test</li>
                 <li>If live cam is not visible click on refresh page</li>
                 <li>Ensure that your face is clear with proper lighting.</li>
             </ul>

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import AdminDashboard from './Admin';
 import {BrowserRouter, Routes, Route } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './context';
@@ -14,6 +15,7 @@ root.render(
       <Routes>
         <Route path="/Adminlogin" Component={Signin_admin} />
         <Route path='/' Component={uploadquestions} />
+              <AdminDashboard />
       </Routes>
     </BrowserRouter>
   </AuthProvider>

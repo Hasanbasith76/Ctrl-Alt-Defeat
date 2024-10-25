@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import * as blazeface from '@tensorflow-models/blazeface';
+import { useNavigate } from 'react-router-dom'; // Hook for navigation
 
 const Aiproctor = () => {
   const videoRef = useRef(null);
@@ -8,9 +9,11 @@ const Aiproctor = () => {
   const audioContextRef = useRef(null);
   const audioAnalyzerRef = useRef(null);
   const audioDataArrayRef = useRef(new Uint8Array(256));
+  const navigate = useNavigate(); // Hook for navigation
 
   const [faceStatus, setFaceStatus] = useState('Initializing...');
   const [audioStatus, setAudioStatus] = useState('Audio levels are normal.');
+  let animationFrameId; // Variable to store the animation frame ID
 
   useEffect(() => {
     const setupCamera = async () => {
@@ -40,12 +43,23 @@ const Aiproctor = () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
+      cancelAnimationFrame(animationFrameId); // Clean up the animation frame on unmount
     };
   }, []);
 
   const detectFaces = async () => {
     if (videoRef.current && modelRef.current) {
       const predictions = await modelRef.current.estimateFaces(videoRef.current, false);
+
+      // Check if more than two faces are detected
+      if (predictions.length >= 2) {
+        // Clear the animation frame request
+        cancelAnimationFrame(animationFrameId);
+
+        // Navigate to the Thankyou page and terminate the test
+        navigate('/Thankyou'); 
+        return;
+      }
 
       if (predictions.length > 0) {
         const face = predictions[0];
@@ -77,7 +91,7 @@ const Aiproctor = () => {
       }
     }
 
-    requestAnimationFrame(detectFaces);
+    animationFrameId = requestAnimationFrame(detectFaces); // Store the animation frame ID
   };
 
   const monitorAudioLevels = () => {
@@ -106,8 +120,9 @@ const Aiproctor = () => {
     <div>
       <video ref={videoRef} width="350" height="250" autoPlay muted />
       <p>Face Status: {faceStatus}</p>
-      <p>Audio Status: {audioStatus}</p>
-    </div> );
+      <p>Audio Status: {audioStatus}</ p>
+    </div>
+  );
 };
 
 export default Aiproctor;

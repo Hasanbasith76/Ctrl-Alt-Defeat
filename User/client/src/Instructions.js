@@ -7,14 +7,14 @@ export default function Instructions(){
             <div className="contentinst">
                 <h1>Instructions To Be Noted:</h1>
                 <p>Disable all the Desktop Notifications throught the assessment</p>
-                <ul>
-                    <li>Do not leave the camera preview</li>
-                    <li>Do not look away from the screen</li>
-                    <li>Do not leave your web browser</li>
-                    <li>Do not speak unless instructed</li>
-                    <li>Do not allow othersin the room with you</li>
-                    <li>Do not use any outside reference material</li>
-                </ul>
+                <ol>
+                    <li>Ensure webcam is functional and well connected.You will be monitored via webcam during the assessment</li>
+                    <li>Conduct assessment fairly. Please note that toggling between screens will be considered malpractice </li>
+                    <li>Keep your browser open.</li>
+                    <li>Speak only when requested to do so.</li>
+                    <li>Avoid allowing anyone else in the room which will automatically terminate the test.</li>
+                    <li>Don't utilize third-party resources.</li>
+                </ol>
                 <div className="nav-btn">
                     <a href="/Checkwindow">
                         <button className="L"> 
