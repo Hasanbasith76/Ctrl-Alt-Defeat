@@ -3,11 +3,10 @@ const multer = require('multer');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const app = express();
-const path = require('path')
+const path = require('path');
 const upload = multer({ dest: './uploads/' });
 const fs = require('fs');
 const firebase = require('firebase-admin');
-const { console } = require('inspector');
 
 // Initialize Firebase Admin SDK
 firebase.initializeApp({
@@ -20,6 +19,7 @@ firebase.initializeApp({
   measurementId: "G-ES16DP91DS"
 });
 
+// User Schema
 const userSchema = new mongoose.Schema({
   email: String,
   username: String,
@@ -28,9 +28,27 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User ', userSchema);
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost/mydatabse', { useNewUrlParser: true, useUnifiedTopology: true });
+// Question Schema
+const questionSchema = new mongoose.Schema({
+  questionText: String,
+  options: [String],
+  correctAnswer: String
+});
 
+const Question = mongoose.model('Question', questionSchema);
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/mydatabase', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
+  socketTimeoutMS: 45000, // Increase socket timeout
+})
+.then(() => {
+  console.log('Connected to MongoDB');
+  insertQuestions(); // Call this function only after successful connection
+})
+.catch(err => console.error('Error connecting to MongoDB:', err));
 
 userSchema.pre('save', function(next) {
   const user = this;
@@ -50,7 +68,7 @@ app.post('/api/register', (req, res) => {
   const { email, username, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
   const user = new User({ email, username, password: hashedPassword });
-  user.save((err, user) => {
+  user.save((err) => {
     if (err) {
       res.status(400).send('Registration failed');
     } else {
@@ -78,44 +96,22 @@ app.post('/api/login', (req, res) => {
 
 // Create a route to handle image uploads
 app.post('/api/upload-image', upload.single('image'), (req, res) => {
-  // req.file contains the uploaded image file
   const imageBuffer = req.file.buffer;
   const imageName = req.file.originalname;
-
-  // You can store the image in a database or file system
-  // For this example, we'll store it in a local file system
   const filePath = `./uploads/${imageName}`;
   fs.writeFileSync(filePath, imageBuffer);
-
   res.status(201).send(`Image uploaded successfully!`);
 });
 
-async function checkUsernamePassword(username, password) {
-  // Validate username format
-  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-    return { error: 'Invalid username format' };
+// API endpoint to load questions
+app.get('/api/questions', async (req, res) => {
+  try {
+    const questions = await Question.find();
+    res.json(questions);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to load questions' });
   }
-
-  // Check for existing username
-  const user = await User.findOne({ username });
-  if (!user) {
-    return { error: 'Username not found' };
-  }
-
-  // Validate password format
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,}$/.test(password)) {
-    return { error: 'Invalid password format' };
-  }
-
-  // Compare the input password with the stored hash
-  const hashedPassword = user.password;
-  const isValid = await bcrypt.compare(password, hashedPassword);
-  if (!isValid) {
-    return { error: 'Invalid password' };
-  }
-
-  return { success: true };
-}
+});
 
 // API endpoint to handle signup requests
 app.post('/api/signup', async (req, res) => {
@@ -132,52 +128,43 @@ app.post('/api/signup', async (req, res) => {
   }
 
   // Validate password format
-  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,}$/.test(password)) {
+  if (!/^(?=.*[a-z])(?=.*[A-Z ])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password)) {
     return res.status(400).json({ error: 'Invalid password format' });
   }
 
-  // Check for existing username or email
-  const existingUser   = await User.findOne({ $or: [{ username }, { email }] });
-  if (existingUser  ) {
-    return res.status(400).json({ error: 'Username or email already exists' });
-  }
-
-  // Create a new user
-  const user = new User({ username, password, email });
-
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(password, 10);
-  user.password = hashedPassword;
-
-  // Save the user
   try {
+    const user = new User({ username, password, email });
     await user.save();
-    res.json({ success: true });
+    res.json({ message: 'User created successfully!' });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create user' });
+    res.status(400).json({ error: 'Failed to create user' });
   }
 });
 
-// API endpoint to handle login requests
-app.post('/api/login', async (req, res) => {
-  const { username, password } = req.body;
-  const result = await checkUsernamePassword(username, password);
-  if ( result.error) {
-    res.status(401).json({ error: result.error });
-  } else {
-    // Generate a Firebase token
-    const user = await User.findOne({ username });
-    const token = await firebase.auth().createCustomToken(user._id);
-    res.json({ token });
+// Insert sample questions
+const insertQuestions = async () => {
+  try {
+    await Question.deleteMany();
+    const questions = [
+      {
+        questionText: 'What is the capital of France?',
+        options: ['Paris', 'London', 'Berlin', 'Rome'],
+        correctAnswer: 'Paris'
+      },
+      {
+        questionText: 'What is the largest planet in our solar system?',
+        options: ['Earth', 'Saturn', 'Jupiter', 'Uranus'],
+        correctAnswer: 'Jupiter'
+      },
+      // Add more questions here...
+    ];
+    await Question.insertMany(questions);
+    console.log('Sample questions inserted successfully!');
+  } catch (err) {
+    console.error('Error inserting sample questions:', err);
   }
-});
+};
 
-// Create a route to retrieve the uploaded images
-app.get('/api/images', (req, res) => {
-  const images = fs.readdirSync('./uploads/');
-  res.json(images);
-
-const port = 3000;
-app.listen(port, () => {
-  console.log(`Server started on port ${port}`);
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
 });
