@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import * as tf from '@tensorflow/tfjs';
 import * as blazeface from '@tensorflow-models/blazeface';
 import { useNavigate } from 'react-router-dom'; // Hook for navigation
+import '@tensorflow/tfjs'; // Import TensorFlow.js
+import '@tensorflow/tfjs-backend-webgl'; // Import WebGL backend
 
 const Aiproctor = () => {
   const videoRef = useRef(null);
@@ -13,6 +14,7 @@ const Aiproctor = () => {
 
   const [faceStatus, setFaceStatus] = useState('Initializing...');
   const [audioStatus, setAudioStatus] = useState('Audio levels are normal.');
+  const [showWarning, setShowWarning] = useState(false); // State for warning visibility
   let animationFrameId; // Variable to store the animation frame ID
 
   useEffect(() => {
@@ -39,11 +41,23 @@ const Aiproctor = () => {
       monitorAudioLevels();
     });
 
+    // Add event listener for visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        setShowWarning(true); // Show warning when tab is hidden
+      } else {
+        setShowWarning(false); // Hide warning when tab is visible
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       if (audioContextRef.current) {
         audioContextRef.current.close();
       }
       cancelAnimationFrame(animationFrameId); // Clean up the animation frame on unmount
+      document.removeEventListener('visibilitychange', handleVisibilityChange); // Clean up the event listener
     };
   }, []);
 
@@ -91,7 +105,7 @@ const Aiproctor = () => {
       }
     }
 
-    animationFrameId = requestAnimationFrame(detectFaces); // Store the animation frame ID
+    animationFrameId = requestAnimationFrame(detectFaces);
   };
 
   const monitorAudioLevels = () => {
@@ -120,7 +134,7 @@ const Aiproctor = () => {
     <div>
       <video ref={videoRef} width="350" height="250" autoPlay muted />
       <p>Face Status: {faceStatus}</p>
-      <p>Audio Status: {audioStatus}</ p>
+      <p>Audio Status: {audioStatus}</p>
     </div>
   );
 };
